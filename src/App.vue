@@ -1,28 +1,41 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
-</template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+  export default {
+    name: 'App',
+    components: {
+      coin: require("./components/Coin").default,
+      guessbtn: require("./components/GuessBtn").default,
+    },
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+    data() {
+      return {
+        guess: "",
+        score: 0
+      }
+    },
+
+    methods: {
+      onEndFlip(result) {
+        if (this.guess === result) {
+          this.score++;
+        } else {
+          this.score--;
+          
+        }
+      }
+    }
+  };
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<template>
+  <div>
+    <coin @startFlip="guess = ''" @endFlip="onEndFlip"></coin>
+    <guessbtn @click.native="guess = 'heads'" :disabled='Boolean(guess)'>
+      Heads
+    </guessbtn>
+    <guessbtn @click.native="guess = 'tails'" :disabled='Boolean(guess)'>
+      Tails
+    </guessbtn>
+    <div>My guess: {{ guess }} </div>
+    <div>My Score: {{ score }} </div>
+  </div>
+</template>
