@@ -43,8 +43,8 @@
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
-    font-size: 50px;
+    align-items: center;
+    font-size: 2em;
     color: #fff;
     opacity: 0.4;
     transition: all 0.2s;
@@ -52,7 +52,7 @@
 
   .panel:hover {
     opacity: 0.8;
-    font-size: 100px;
+    font-size: 3em;
   }
 
   .panel--heads {
