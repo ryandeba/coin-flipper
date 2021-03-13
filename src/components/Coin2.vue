@@ -1,8 +1,8 @@
 <template>
   <div id="coinContainer">
-    <div id="coin" ref="coin" @click="flip" @animationend="testFn">
-      <div class="coinFace sideA"></div>
-      <div class="coinFace sideB"></div>
+    <div id="coin" ref="coin" @click="startFlip" @animationend="nextAnimation($event)">
+      <div class="coinFace sideA"><span>H</span></div>
+      <div class="coinFace sideB"><span>T</span></div>
     </div>
   </div>
 </template>
@@ -12,24 +12,49 @@ export default {
   data() {
     return {
       result: "",
-      state: "",
+      coinState: "still",
     };
   },
 
-  methods: {
-    flip() {
-      const coin = this.$refs.coin;
-      coin.classList.add("flipHeads");
+  computed: {
+    coin() {
+      return this.$refs.coin;
     },
-    testFn() {
-      const coin = this.$refs.coin;
-      if (!this.state) {
-        this.state = "flipping";
-        coin.classList.remove("flipHeads");
-        coin.classList.add("keepFlipping");
+  },
+
+  methods: {
+    startFlip() {
+      this.coin.classList = []; //Removes conflicting animation classes if present after flip.
+      this.coin.classList.add("flip");
+      this.getFlipResult();
+    },
+    nextAnimation(event) {
+      let coin = this.coin;
+      let finishedAnimation = event.animationName;
+
+      if (finishedAnimation === "flip") {
+        coin.classList.remove(finishedAnimation);
+        return coin.classList.add("float");
+      } else if (finishedAnimation === "float") {
+        coin.classList.remove(finishedAnimation);
+
+        if (this.result === "heads") {
+          return coin.classList.add("resultHeads");
+        } else {
+          return coin.classList.add("resultTails")
+        }
       } else {
-        coin.classList.remove("keepFlipping");
-        coin.classList.add("endFlip");
+        return;
+      }
+    },
+
+    getFlipResult() {
+      let result = Math.round(Math.random());
+
+      if (result === 0) {
+        return (this.result = "heads");
+      } else {
+        return (this.result = "tails");
       }
     },
   },
@@ -56,32 +81,43 @@ export default {
   border-radius: 50%;
   position: absolute;
   backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .sideA {
-  background-color: blue;
+  background-color: #8F94A2;
   z-index: 100;
 }
 .sideB {
-  background-color: red;
+  background-color: #8F94A2;
   transform: rotateX(-180deg);
 }
-.flipHeads {
-  animation: flipHeads 1s linear;
+span {
+  font-size: 3rem;
 }
-.keepFlipping {
-  animation-name: keepFlipping;
+.flip {
+  animation: flip 1s linear;
+}
+.float {
+  animation-name: float;
   animation-duration: 10s;
   animation-timing-function: linear;
 }
 
 .endFlip {
-  animation: flipHeads 1s linear reverse;
+  animation: flip 1s linear reverse;
 }
 
-#coin.tails {
-  animation: flipTails 3s infinite;
+.resultHeads {
+  animation: resultHeads 1s linear forwards;
 }
-@keyframes flipHeads {
+
+.resultTails {
+  animation: resultTails 1s linear forwards;
+}
+
+@keyframes flip {
   from {
     transform: rotateX(0);
     bottom: 25vh;
@@ -91,9 +127,9 @@ export default {
     bottom: calc(100% - 100px);
   }
 }
-@keyframes keepFlipping {
+@keyframes float {
   from {
-    transform: rotateX(0);
+    transform: rotateX(180deg);
     bottom: calc(100% - 100px);
   }
   to {
@@ -101,14 +137,24 @@ export default {
     bottom: calc(100% - 100px);
   }
 }
-@keyframes flipTails {
+@keyframes resultTails {
   from {
     transform: rotateX(0);
-    bottom: 0;
+    bottom: calc(100% - 100px);
   }
   to {
     transform: rotateX(1980deg);
-    bottom: 100%;
+    bottom: 25vh;
+  }
+}
+@keyframes resultHeads {
+  from {
+    transform: rotateX(0);
+    bottom: calc(100% - 100px);
+  }
+  to {
+    transform: rotateX(1800deg);
+    bottom: 25vh;
   }
 }
 </style>
