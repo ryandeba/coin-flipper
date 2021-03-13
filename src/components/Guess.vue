@@ -36,15 +36,6 @@
 </script>
 
 <style scoped>
-  .button {
-    font-size: 32px;
-    padding: 10px;
-  }
-
-  .selected {
-    background-color: #2196F3;
-  }
-
   .panel {
     position: fixed;
     top: 0;
