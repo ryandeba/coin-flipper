@@ -52,6 +52,7 @@
 
   .panel:hover {
     opacity: 0.8;
+    font-size: 100px;
   }
 
   .panel--heads {
