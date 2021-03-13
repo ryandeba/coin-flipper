@@ -2,8 +2,9 @@
   export default {
     name: 'App',
     components: {
-      coin: require("./components/Coin").default,
+      //coin: require("./components/Coin").default,
       guessbtn: require("./components/GuessBtn").default,
+      cointwo: require("./components/Coin2").default
     },
 
     data() {
@@ -28,7 +29,8 @@
 
 <template>
   <div>
-    <coin @startFlip="guess = ''" @endFlip="onEndFlip"></coin>
+    <!--<coin @startFlip="guess = ''" @endFlip="onEndFlip"></coin>-->
+    <cointwo></cointwo>
     <guessbtn @click.native="guess = 'heads'" :disabled='Boolean(guess)'>
       Heads
     </guessbtn>
