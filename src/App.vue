@@ -10,7 +10,8 @@
     data() {
       return {
         guess: "",
-        score: 0
+        score: 0,
+        result: ""
       }
     },
 
@@ -22,6 +23,17 @@
           this.score--;
           
         }
+      },
+      setResult() {
+        
+      let result = Math.round(Math.random());
+
+      if (result === 0) {
+        return this.result = "heads";
+      } else {
+        return this.result = "tails";
+      
+    }
       }
     }
   };
@@ -30,7 +42,7 @@
 <template>
   <div>
     <!--<coin @startFlip="guess = ''" @endFlip="onEndFlip"></coin>-->
-    <cointwo></cointwo>
+    <cointwo @flip-started="setResult" :guess="guess" :result="result"></cointwo>
     <guessbtn @click.native="guess = 'heads'" :disabled='Boolean(guess)'>
       Heads
     </guessbtn>
@@ -41,3 +53,10 @@
     <div>My Score: {{ score }} </div>
   </div>
 </template>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>

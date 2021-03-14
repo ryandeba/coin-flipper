@@ -1,6 +1,12 @@
 <template>
   <div id="coinContainer">
-    <div id="coin" ref="coin" @click="startFlip" @animationend="nextAnimation($event)">
+    <div
+      id="coin"
+      ref="coin"
+      @click="startFlip"
+      @animationstart="currentAnimation = $event.animationName"
+      @animationend="nextAnimation($event)"
+    >
       <div class="coinFace sideA"><span>H</span></div>
       <div class="coinFace sideB"><span>T</span></div>
     </div>
@@ -9,25 +15,36 @@
 
 <script>
 export default {
+  props: ["guess", 'result'],
+
   data() {
     return {
-      result: "",
-      coinState: "still",
-    };
+      currentAnimation: ""
+    }
   },
 
   computed: {
     coin() {
       return this.$refs.coin;
     },
+    finishAnimation() {
+      if (this.guess !== "" &&
+          this.currentAnimation === "float") {
+        return true;
+      } else{
+        return false;
+      }
+    }
   },
 
   methods: {
     startFlip() {
       this.coin.classList = []; //Removes conflicting animation classes if present after flip.
       this.coin.classList.add("flip");
-      this.getFlipResult();
+
+      this.$emit("flip-started");
     },
+
     nextAnimation(event) {
       let coin = this.coin;
       let finishedAnimation = event.animationName;
@@ -39,25 +56,23 @@ export default {
         coin.classList.remove(finishedAnimation);
 
         if (this.result === "heads") {
-          return coin.classList.add("resultHeads");
+          return coin.classList.add("heads");
         } else {
-          return coin.classList.add("resultTails")
+          return coin.classList.add("tails");
         }
       } else {
         return;
       }
-    },
-
-    getFlipResult() {
-      let result = Math.round(Math.random());
-
-      if (result === 0) {
-        return (this.result = "heads");
-      } else {
-        return (this.result = "tails");
-      }
-    },
+    }
   },
+
+  watch: {
+    finishAnimation: function() {
+      if (this.finishAnimation) {
+        return this.nextAnimation({animationName: "float"});
+      }
+    }
+  }
 };
 </script>
 
@@ -78,6 +93,7 @@ export default {
 .coinFace {
   width: 100%;
   height: 100%;
+  background-color: #8f94a2;
   border-radius: 50%;
   position: absolute;
   backface-visibility: hidden;
@@ -86,11 +102,9 @@ export default {
   align-items: center;
 }
 .sideA {
-  background-color: #8F94A2;
   z-index: 100;
 }
 .sideB {
-  background-color: #8F94A2;
   transform: rotateX(-180deg);
 }
 span {
@@ -104,16 +118,10 @@ span {
   animation-duration: 10s;
   animation-timing-function: linear;
 }
-
-.endFlip {
-  animation: flip 1s linear reverse;
-}
-
-.resultHeads {
+.heads {
   animation: resultHeads 1s linear forwards;
 }
-
-.resultTails {
+.tails {
   animation: resultTails 1s linear forwards;
 }
 
