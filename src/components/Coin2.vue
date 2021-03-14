@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  props: ["guess", 'result'],
+  props: ["guess", "result"],
 
   data() {
     return {
@@ -61,7 +61,7 @@ export default {
           return coin.classList.add("tails");
         }
       } else {
-        return;
+        return this.$emit('flip-ended');
       }
     }
   },

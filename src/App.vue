@@ -16,13 +16,15 @@
     },
 
     methods: {
-      onEndFlip(result) {
-        if (this.guess === result) {
+      onEndFlip() {
+        if (this.guess === this.result) {
           this.score++;
         } else {
           this.score--;
-          
         }
+
+        this.guess = "";
+        this.result = "";
       },
       setResult() {
         
@@ -42,7 +44,7 @@
 <template>
   <div>
     <!--<coin @startFlip="guess = ''" @endFlip="onEndFlip"></coin>-->
-    <cointwo @flip-started="setResult" :guess="guess" :result="result"></cointwo>
+    <cointwo @flip-started="setResult" @flip-ended="onEndFlip" :guess="guess" :result="result"></cointwo>
     <guessbtn @click.native="guess = 'heads'" :disabled='Boolean(guess)'>
       Heads
     </guessbtn>
