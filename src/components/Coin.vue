@@ -82,7 +82,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 1000;
 }
 #coin {
   width: 100px;
@@ -90,6 +89,7 @@ export default {
   position: absolute;
   transition: transform 1s;
   transform-style: preserve-3d;
+  z-index: 1000;
 }
 .coinFace {
   width: 100%;
