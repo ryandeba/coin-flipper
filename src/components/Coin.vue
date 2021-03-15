@@ -1,118 +1,169 @@
-<script>
-  export default {
-    data() {
-      return {
-        flipping: false,
-        classes: "",
-      };
-    },
-
-    methods: {
-      flip() {
-        this.flipping = true;
-        this.$emit('startFlip');
-
-        let result = Math.random() <= 0.5 ? "heads" : "tails";
-
-        setTimeout(() => {
-          this.flipping = false;
-          this.$emit('endFlip', result)
-        }, 3000)
-
-        this.classes = "";
-        setTimeout(() => {
-          this.classes = result;
-        }, 0);
-      }
-    }
-  };
-</script>
-
 <template>
-  <div
-    style="display: flex; transition: height 1.5s;"
-    :style="{
-      height: flipping ? '25%' : '100%'
-    }"
-  >
+  <div id="coinContainer">
     <div
       id="coin"
-      :class="classes"
-      @click="flip"
-      style="display: flex; font-size: 20px;"
+      ref="coin"
+      @click="startFlip"
+      @animationstart="currentAnimation = $event.animationName"
+      @animationend="nextAnimation($event)"
     >
-      <div class="side-a">heads</div>
-      <div class="side-b">tails</div>
+      <div class="coinFace sideA"><span>H</span></div>
+      <div class="coinFace sideB"><span>T</span></div>
     </div>
   </div>
 </template>
 
-<style lang="css" scoped>
+<script>
+export default {
+  props: ["guess", "result"],
+
+  data() {
+    return {
+      currentAnimation: ""
+    }
+  },
+
+  computed: {
+    coin() {
+      return this.$refs.coin;
+    },
+    finishAnimation() {
+      if (this.guess !== "" &&
+          this.currentAnimation.includes("float")) {
+        return true;
+      } else{
+        return false;
+      }
+    }
+  },
+
+  methods: {
+    startFlip() {
+      this.coin.classList = []; //Removes conflicting animation classes if present after flip.
+      this.coin.classList.add("flip");
+
+      this.$emit("flip-started");
+    },
+
+    nextAnimation(event) {
+      let coin = this.coin;
+      let finishedAnimation = event.animationName;
+
+      if (finishedAnimation.includes("flip")) {
+        coin.classList.remove(finishedAnimation);
+        return coin.classList.add("float");
+      } else if (finishedAnimation.includes("float")) {
+        coin.classList.remove(finishedAnimation);
+
+        if (this.result === "heads") {
+          return coin.classList.add("heads");
+        } else {
+          return coin.classList.add("tails");
+        }
+      } else {
+        return this.$emit('flip-ended');
+      }
+    }
+  },
+
+  watch: {
+    finishAnimation: function() {
+      if (this.finishAnimation) {
+        return this.nextAnimation({animationName: "float"});
+      }
+    }
+  }
+};
+</script>
+
+<style scoped>
+#coinContainer {
+  height: 75vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+}
 #coin {
-  position: relative;
-  margin: 0 auto;
   width: 100px;
   height: 100px;
-  cursor: pointer;
-  align-self: flex-end;
-  z-index: 1;
-  border-radius: 100%;
-  box-shadow: 0 0 10px 10px #fff;
-  color: #fff;
+  position: absolute;
+  transition: transform 1s;
+  transform-style: preserve-3d;
 }
-#coin div {
+.coinFace {
   width: 100%;
   height: 100%;
+  background-color: #8f94a2;
   border-radius: 50%;
-  box-shadow: inset 0 0 45px rgba(255,255,255,.3), 0 12px 20px -10px rgba(0,0,0,.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.side-a {
-  background-color: #bb0000;
-}
-.side-b {
-  background-color: #3e3e3e;
-}
-
-#coin {
-  transition: -webkit-transform 1s;
-  -webkit-transform-style: preserve-3d;
-}
-#coin div {
   position: absolute;
-  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.side-a {
+.sideA {
   z-index: 100;
 }
-.side-b {
-  -webkit-transform: rotateX(-180deg);
-
+.sideB {
+  transform: rotateX(-180deg);
+}
+span {
+  font-size: 3rem;
+}
+.flip {
+  animation: flip 1s linear;
+}
+.float {
+  animation-name: float;
+  animation-duration: 10s;
+  animation-timing-function: linear;
+}
+.heads {
+  animation: resultHeads 1s linear forwards;
+}
+.tails {
+  animation: resultTails 1s linear forwards;
 }
 
-#coin.heads {
-  animation: flipHeads 3s linear forwards;
-}
-#coin.tails {
-  animation: flipTails 3s linear forwards;
-}
-
-@keyframes flipHeads {
-  0% {
+@keyframes flip {
+  from {
     transform: rotateX(0);
+    bottom: 25vh;
   }
-  100% {
+  to {
     transform: rotateX(1800deg);
+    bottom: calc(100% - 100px);
   }
 }
-@keyframes flipTails {
-  0% {
-    transform: rotateX(0);
+@keyframes float {
+  from {
+    transform: rotateX(180deg);
+    bottom: calc(100% - 100px);
   }
-  100% {
+  to {
+    transform: rotateX(18000deg);
+    bottom: calc(100% - 100px);
+  }
+}
+@keyframes resultTails {
+  from {
+    transform: rotateX(0);
+    bottom: calc(100% - 100px);
+  }
+  to {
     transform: rotateX(1980deg);
+    bottom: 25vh;
+  }
+}
+@keyframes resultHeads {
+  from {
+    transform: rotateX(0);
+    bottom: calc(100% - 100px);
+  }
+  to {
+    transform: rotateX(1800deg);
+    bottom: 25vh;
   }
 }
 </style>

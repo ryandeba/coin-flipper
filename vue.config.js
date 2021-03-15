@@ -1,3 +1,7 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "/coin-flipper/" : "/"
+  publicPath: process.env.NODE_ENV === "production" ? "/coin-flipper/" : "/",
+
+  transpileDependencies: [
+    'vuetify'
+  ]
 }
