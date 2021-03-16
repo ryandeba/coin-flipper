@@ -36,6 +36,7 @@ export default {
       }
 
       this.flipping = false;
+      this.guess = "";
     }
   },
 };

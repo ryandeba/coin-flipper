@@ -5,10 +5,10 @@
       ref="coin"
       @click="startFlip"
       @animationstart="currentAnimation = $event.animationName"
-      @animationend="nextAnimation($event)"
+      @animationend="nextAnimation"
     >
-      <div class="coinFace sideA"><span>H</span></div>
-      <div class="coinFace sideB"><span>T</span></div>
+      <div class="side heads"></div>
+      <div class="side tails"></div>
     </div>
   </div>
 </template>
@@ -19,8 +19,8 @@ export default {
 
   data() {
     return {
-      currentAnimation: ""
-    }
+      currentAnimation: "",
+    };
   },
 
   computed: {
@@ -28,13 +28,12 @@ export default {
       return this.$refs.coin;
     },
     finishAnimation() {
-      if (this.guess !== "" &&
-          this.currentAnimation.includes("float")) {
+      if (this.guess !== "" && this.currentAnimation.includes("float")) {
         return true;
-      } else{
+      } else {
         return false;
       }
-    }
+    },
   },
 
   methods: {
@@ -45,34 +44,33 @@ export default {
       this.$emit("flip-started");
     },
 
-    nextAnimation(event) {
+    nextAnimation() {
       let coin = this.coin;
-      let finishedAnimation = event.animationName;
 
-      if (finishedAnimation.includes("flip")) {
-        coin.classList.remove(finishedAnimation);
+      if (this.currentAnimation.includes("flip")) {
+        coin.classList.remove("flip");
         return coin.classList.add("float");
-      } else if (finishedAnimation.includes("float")) {
-        coin.classList.remove(finishedAnimation);
+      } else if (this.currentAnimation.includes("float")) {
+        coin.classList.remove("float");
 
         if (this.result === "heads") {
-          return coin.classList.add("heads");
+          return coin.classList.add("resultHeads");
         } else {
-          return coin.classList.add("tails");
+          return coin.classList.add("resultTails");
         }
       } else {
-        return this.$emit('flip-ended');
+        return this.$emit("flip-ended");
       }
-    }
+    },
   },
 
   watch: {
-    finishAnimation: function() {
+    finishAnimation: function () {
       if (this.finishAnimation) {
-        return this.nextAnimation({animationName: "float"});
+        return this.nextAnimation();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -85,32 +83,47 @@ export default {
 }
 #coin {
   width: 100px;
-  height: 100px;
+  height: 10px;
+  background: linear-gradient(90deg, silver, #141001);
   position: absolute;
-  transition: transform 1s;
+  transform: rotateX(-90deg);
   transform-style: preserve-3d;
   z-index: 1000;
 }
-.coinFace {
-  width: 100%;
-  height: 100%;
-  background-color: #8f94a2;
+.side,
+#coin::before,
+#coin::after {
+  content: "😎";
+  font-size: 60px;
+  filter: grayscale(50%);
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
+  background: linear-gradient(90deg, silver, #141001);
   position: absolute;
+  bottom: calc(-100px / 2 + 10px);
+  transform: rotateX(-90deg);
   backface-visibility: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.sideA {
-  z-index: 100;
+.tails,
+#coin::after {
+  content: "🦅";
+  top: calc(-100px / 2 + 10px);
+  transform: rotateX(90deg);
 }
-.sideB {
-  transform: rotateX(-180deg);
+#coin::before,
+#coin::after {
+  backface-visibility: hidden;
+  transform: rotateX(90deg);
+  background: silver;
 }
-span {
-  font-size: 3rem;
+#coin::after {
+  transform: rotateX(-90deg);
 }
+
 .flip {
   animation: flip 1s linear;
 }
@@ -119,10 +132,10 @@ span {
   animation-duration: 10s;
   animation-timing-function: linear;
 }
-.heads {
+.resultHeads {
   animation: resultHeads 1s linear forwards;
 }
-.tails {
+.resultTails {
   animation: resultTails 1s linear forwards;
 }
 
@@ -152,7 +165,7 @@ span {
     bottom: calc(100% - 100px);
   }
   to {
-    transform: rotateX(1980deg);
+    transform: rotateX(1890deg);
     bottom: 25vh;
   }
 }
@@ -162,7 +175,7 @@ span {
     bottom: calc(100% - 100px);
   }
   to {
-    transform: rotateX(1800deg);
+    transform: rotateX(1710deg);
     bottom: 25vh;
   }
 }

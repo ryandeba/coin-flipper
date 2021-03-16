@@ -2,14 +2,14 @@
   <div>
     <div
       class="panel panel--heads"
-      @mouseover="input = 'heads'"
+      @click="input = 'heads'"
     >
       Heads
     </div>
 
     <div 
       class="panel panel--tails"
-      @mouseover="input = 'tails'"
+      @click="input = 'tails'"
     >
       Tails
     </div>
