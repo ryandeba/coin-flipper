@@ -17,6 +17,8 @@ export default {
 
   methods: {
     setResult() {
+      this.guess = "";
+
       let result = Math.round(Math.random());
 
       if (result === 0) {
@@ -36,7 +38,6 @@ export default {
       }
 
       this.flipping = false;
-      this.guess = "";
     }
   },
 };
